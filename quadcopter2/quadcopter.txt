@@ -1,0 +1,233 @@
+Quadcopter pre-flight checks
+
+Pre-flight test kit
+
+Assuming you’ve seen MagPi issue 19, you’ll have read the high-level overview of how to build your own quadcopter using a Raspberry Pi as the flight-controller.  However, there were lots of details missing in that article about tuning and testing the settings for your quadcopter.  This article fills in those blanks.
+
+First, some prerequisites…
+
+Power up your quadcopter
+
+These tests can’t be powered from a wire – you need a fully charged battery attached to your quad; unlike the rest of the world, where duct tape is the Force, with quadcopters, it seems to be velcro!  Use it generously to make sure everything is securely attached.
+
+Connect to your quadcopter
+
+Your quadcopter needs WiFi; you need another machine (Raspberry Pi, Windows or Linux) that can open a secure shell and log into your Quadcopter Raspberry Pi.  I use an iPad using WebSSH or rlogin from one of my other Raspberry Pis depending on where the testing is happening.
+
+Get the latest code
+
+This project is still live, and the code changes regularly.  Make sure you have the latest from GitHub PiStuffing/Quadcopter copied into your home directory – /home/pi for example.
+
+The command-line
+
+The quadcopter python code, qc.py, has various command-line parameters which control its testing and flights.  Here’s the complete list.  We’ll go through these in detail throughout the article.  To run your quadcopter, at the command prompt where the code lives, type
+
+sudo python ./qc.py
+
+with a set parameters:
+
+-f – fly the quad
+-v – run the video
+-g – calibrate gravity
+-h XXXX – set the PWM pulse width for hover
+--tc # – run test case number #
+--hvp XXXX- horizontal velocity PID P gain
+--hvi XXXX – horizontal velocity PID I gain
+--hvd XXXX – horizontal velocity PID D gain
+--vvp XXXX – vertical velocity PID P gain
+--vvi XXXX – vertical  velocity PID I gain
+--vvd XXXX – vertical velocity PID D gain
+--aap XXXX – absolute angle PID P gain
+--aai XXXX – absolute angle PID I gain
+--aad XXXX – absolute angle PID D gain
+--arp XXXX – angular rate PID P gain
+--ari XXXX – angular rate PID I gain
+--ard XXXX – angular rate PID D gain
+Countdown beeps
+
+My quadcopter has a beeper – it counts down from 5 beeps to 1 before the blades spin up.  I put it there to add time before take-off allowing me to abort the flight for any reason.  Some of the tests we are going to do require you to start up your quad, and then hold it or move it in some way; you will do this during the countdown beep sequence.  Therefore you MUST have the beeper or some equivalent indicator that take-off is imminent.  The beeper can be replaced by an LED as long as you can see it clearly.
+
+Building the electronics
+
+I’m assuming here that from The MagPi issue 19, you already have a fully built breadboard matching the circuit diagram / breadboard layouts provided in that article.
+
+OK, now that’s all sorted, let’s get on with the show…
+
+Binding the code to the hardware
+
+The code refers to the propellers by their location (front left, front right, back left and back right – looking from the top) and the direction the propellers rotate (clockwise or anticlockwise).  The first step of pre-flight setup is to ensure that the hardware agrees with the software.
+
+With your battery disconnected, fit the blades to the motors to match the code: front left and back right blades spin anti-clockwise; the other pair clockwise.  Look carefully at your set of 4 blades. It should be clearly visible which are designed to move clockwise and which anti-clockwise – fit them to match the code’s expectations.
+
+Plug the three motor wires into its ESC, and the ESC PWM leads into the breadboard.  The ESC cables are generally brown, red and orange (resistor colour coding for 1, 2, 3) or black, red and (white | grey) for ground, positive, signal.  Connect the (orange | number 3 | white | grey) signal wire to the following breadboard pins:
+
+Back-left ESC plugs into BCM pin 22 / Cobbler GPIO pin 15
+Front-left ESC plugs into BCM pin 17 / Cobbler GPIO pin 11
+Front-right ESC plugs into BCM pin 18 / Cobbler GPIO pin 12
+Back-right ESC plugs into BCM pin 23 / Cobbler GPIO pin 16
+The red | number 2 lead connects to 5v and the remaining brown / black / number 1 to ground.
+
+Now we need to make sure the connection to the ESCs are also in agreement with the direction each blade should rotate.  For that we need to use some test code that starts up each of the motors in turn at a slow speed starting from front-left, through front right, back-left, and ending with back-right.
+
+Search the code for “TESTCASE 1:” for the code change used by this test.
+
+Run the test from the command prompt:
+
+sudo python ./qc.py --tc 1 -h 200
+
+200 is an ESC PWM setting that should be high enough that all motors start in turn, but low enough that they spin slowly.
+
+As each blade spins up, you should check that each spins the correct direction – the easiest way is simply to feel the airflow from each blade as it spins – it should be blowing downward!  If it feels wrong, swap any 2 of the 3 ESC wires to the motor, and try again.
+
+As mentioned, the code steps through the motors in order front-left, front-right, back-left, back right – if they don’t run in that order for you, check that your ESCs are connected to the correct GPIO pins.
+
+Hover speed
+
+The next step is to determine an approximate hover speed.  That means finding the PWM pulse width in microseconds that is required to sustain a hover.  If you don’t set it on the command line with the -h parameter, then the code defaults the value to 590, which is the value that works for me.  But how do you find this magic number for your quad?
+
+It involved another set of code changes – look for “TESTCASE 2″ in the code
+
+This sets all the motors to spin for 10s, and then stop – how fast they spin is set by the command line parameter:
+
+start up your quad with “sudo python ./qc.py --tc 2 -h 100“
+while it’s beeping pick it up and and hold it above your head, making sure the propeller blades can’t hit anything (especially you!) when they start spinning.
+DO NOT LET GO, there’s no control software running and the quad will fly around like a screaming banshee trying to cut everything in sight with its blades, especially you!
+as the blades spin, focus on how the quadcopter feels
+if the blades made no difference (or don’t spin at all) increment the -h parameter by 100 and run the test again
+as you start to feel the blades having effect, and your quadcopter is feeling lighter, be a lot more cautious, incrementing -h by 25 or less until you get to a point where your quad feels (nearly) weightless.
+once the quad feels weightless, remember the -h number, find the line of code saying “cli_hover_speed = 590” and replace 590 with your magic number.
+Inner PID balancing
+
+For this test, you’ll need 2 raised platforms to balance your quadcopter between – chairs, stools, sturdy cardboard boxes will all do nicely – they just need to be the same height.  They only need to be tall enough to lift your quadcopter’s legs off the floor.  The key thing is to place your quadcopter on the supports such that its centre of gravity is just below the support point – if it’s above, your quad will be too unstable to do PID tuning – that’s why I had to resort to a step-ladder in my recent testing using straps at roughly the quads centre of gravity to tie the quad tightly to the ladder rungs..
+
+
+Z-N PID tuning setup
+
+The code changes in “TESTCASE 3:” disable the front-right and back-left motors.  Place these arms on the 2 platforms such that your quadcopter dangles in free space between the platforms as shown in the photo.  The other two motors will spin at your newly found cli_hover_speed.  Your quad may not balance between the platforms unless gently supported by you:
+
+sudo python ./qc.py --tc 3 --arp 50 --ari 0 --ard 0
+
+Between the 5 beeps and 4 beeps, your quad needs to sit on the floor as gyro calibration is underway.  At 4 beeps, get you quad onto the platforms with the front-right and back-left legs balancing in between.
+
+Gently hold the nearest leg.  When the blades spin up, carefully let go – what happens?
+
+if the arm you were supporting drops with your hand as you move it down, your angular rotation rate PID P gain (–arp) is not doing its job and needs upping significantly – try doubling it
+If the arms seesaws increasingly meaning you need to hold the leg firmly, your PID is way too high and needs lowering significantly – try reducing by 10%
+if the arm stays where it was, wobbling slightly, but the wobble neither shrinks nor grows, you’re done – lets call this Ku – the ultimate gain – in my recent retesting it came out to be “– arp 150″.
+You are aiming to reach the point where your quad starts seesawing – this is much easier to approach from below rather than trying to reduce the frantic wobble if your start with the P gain too high!
+
+The next stage is to start playing with the I and D gain values.  I did this months ago with days of testing, first adding I gain and reducing P gain as a result, and finally adding D gain.  However, I’ve learnt recently from a comment on my blog that the P, I, and D gains are related.  Check out this link http://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
+
+Using this method, now you’ve found Ku, then Kp, Ki and Kd can be estimated mathematically.
+
+To do so, you also need to count many wobbles happened during the test.  For me, that was 54 in a 15s test flight, so Tu = 15 / 54 = 0.278s.  With these values, I tried Z-N PIDs – each worked well, but each with a minor flaw.  In the end, I picked the best from each resulting in
+
+Kp = 65
+Ki; = 360
+Kd = 5.2
+I tried these values and they worked perfectly as the picture shows – no blur in the photograph = no wobbles in the hover.
+
+With your equivalent values in place, rerun the test; when the test is running, you should be able to let go, and tap the quad, and both feel it resisting due to the differential gain, and returning to where it started due to its integral gain.
+
+If you’re in that position, replace the default values for cli_arp_gain, cli_ari_gain and cli_ard_gain in CheckCLI() with your own.  If the PID values don’t work, it’s time for free-form testing: oscillation is too high a P gain; lack of return to horizontal is due to too low I gain, and the jitters are due to too high D gain.  Enjoy the tinkering until you find your perfect tuning.
+
+Now it’s time to tune the other PIDs outdoors, but before that happens, sensor calibration is needed.
+
+Gravity Calibration
+
+Taking off from a sloping surface, even if it’s very subtle will ultimately lead to sideways drift.  That’s because if the quadcopter takes off from a slope, it stays leaning throughout the flight.  Leaning means some of the power that would be applied as lift in now redirected as horizontal acceleration.
+
+Or that would be the case if only the gyroscope outputs were used to calculate the tilt angles.  Luckily, the accelerometer is also used, and the result combined producing accurate values over time.
+
+The accelerometer reads the force of gravity distribution across its X, Y and Z axes, so when the quad is horizontal, its output in the X, Y, and Z axes should be 0, 0, 1.
+
+Except it won’t unless you calibrate it.  Luckily it’s very simple.  Find yourself a flat strong platform on which your quad can stand – I made a custom one from some perspex with bolts at the corners for easy fine tuning but any wood / metal / glass platform propped up with cardboard / paper / anything thin will do just fine.
+
+Pop your platform on the floor, and with a spirit level in both X & Y axes, get the platform is as horizontal as you can by propping up corners.  Now sit the quad on the platform, leave the battery disconnected and instead boot it up powered by the micro USB plug / wall wart .  Then run
+
+sudo python ./qc.py -g
+
+Wait a few seconds – job done – check the output by typing
+
+cat qcgravity.cfg
+
+You should see the corrective values required by the accelerometer to read 0, 0, 1, when it’s horizontal.
+
+Gyro Calibration
+
+This happens automatically for every flight, and you don’t need to do anything, but it’s worth mentioning it in passing for completeness.
+
+In the same way the accelerometer gives innaccurate readings without tuning, so does the gyro.  The net result of this is the quadcopter believes it’s rotating on its axes when it’s not.
+
+Gyro calibration happens as the first thing when the quadcopter code starts up while it’s sitting still on the ground.
+
+The Remaining PIDs
+
+Your quadcopter is now safe for outdoor test flights; the move outdoors reduces the number of valuable things that the quadcopter can hit during these tests.
+
+Luckily the remaining PIDs are based upon mathematically guesstimation – and if you get it wrong, nothing really bad happens.  It does depend somewhat on the ‘gut-feel’ for propeller speeds you’ve acquired while doing the earlier testing.
+
+For outside testing, the “–tc” parameter is not used; instead “-f” is used to signify a preprogrammed flight pattern:  a 5s takeoff at 0.35 ms-1, a 5 second hover at the resultant height of 1.75m, followed by a 5 second descent back to the ground.
+
+First tuning is for the vertical speed PID for take-off, hover and landing: imagine a speed of ascent of 1ms-1 – that’s very fast and going to need a lot of power – so I put my finger in the air and estimated (based upon the experience from testcase 2) an input of 1ms-1 puts out a PWM increment of 150us to the vertical velocity PID P gain, and I added another 50 as the vertical velocity PID I gain.  These values just worked, so I’ve left them at that as the default values in CheckCLI().
+
+Now pop you quad on the horizontal platform and type
+
+sudo python ./qc.py -f --vvp 150 --vvi 50 --hvp 0.0
+
+It should follow the predefined flight-plan as described.  Do not be tempted to run this test indoors – the expected results I describe may not be what you see, and you don’t want your quad hitting the ceiling.
+
+If it all starts going horribly wrong, Ctrl-C will move on to the next step in the pre-programmed flight pattern, so hammering it had in a blind panic with bring the quadcopter crashing to the ground – been there, done that, too many times.
+
+If this testcase works for you, then update cli_vvp_gain, cli_vvi_gain and cli_vvd_gain in CheckCLI() to use these values.
+
+Next the absolute angle PIDs – again I used the same gut feel + guesswork algorithm.  If we want to change the quad from say hover to 2o, and we want this to happen quickly, but not manicly, then the absolute angle PID needs a P gain of about 5 to convert from the 2o error to a 10o/s rotation speed. Again this value worked fine, so I left it at that.  Check yours by taking off from the ground (the horizontal take-off platform is no longer needed):
+
+sudo python ./qc.py -f --aap 5 --aai 0 --aad 0 --hvp 0
+
+You should see the same flight pattern, even if the ground is uneven or sloping.  Again, if this works for you, update the default values (cli_aap_gain, cli_aai_gain, cli_aad_gain) in CheckCLI().
+
+Finally, the horizontal velocity: this PID takes a target of the desired speed, puts out a target acceleration which is then converted to a desired tilt angle by dividing the output by g (9.81ms-2) and taking the inverse tangent. So if we wanted to accelerate at 1g horizontally, then the quad would tilt at 45o. So we start with a targets to move at 1ms-1, let’s say we want this to produce 5ms-2 acceleration (≈ 0.5g) => tilt angle of atan(0.5g/1g) ≈ 26o which feels about right, so the P gain here is 1ms-1 to 0.1g = 0.1. Seems like a good gut-feel starting point.
+
+You may notice this time I haven’t said ” and it worked fine for me” because as yet I’m still testing it.  This PID is there to prevent drift in windy conditions – the quad should hover above the take-off point regardless of wind.  But wet winter weather, combined with crashes in testing are preventing me from comopleting this test.  Stick with “–hvp 0.0″ unless you are feeling confident to take on these final testing tweaks yourself
+
+Flight Control
+
+Currently the QC is autonomous – its flights are hard-coded, rather than under the control of the user via a radio control (that’s another article, once I’ve built and tested it).  That means if you want to change a flight pattern, you need to change the code.  Look for the “# Interpreter:” tag.
+
+Currently, this code is set up to climb for 5 seconds at 0.35ms-1, hover for 5 seconds, and then descend for 5 seconds at 0.35ms-1.  By all means tinker with the timings and vertical velocity targets and see what effect they have.
+
+Flying in the middle of nowhere
+
+Throughout this article, there’s an assumption that the quadcopter and the SSH client have WiFi connectivity.  But if you’re out flying in a field, then that will probably not be the case.  You need to set up you quadcopter as a wireless access point (WAP).  I’m not running through the details of this here, simply making you aware of the requirement.  Check out the blog entry at http://blog.pistuffing.co.uk/?p=594, the others linked from there and many more like it on the Raspberry Pi forums for details on setting up a WAP.
+
+Useless FAQ
+
+If you’ve deviated from my design you may have questions about why it’s not working for you – here’s a few I’ve second guessed, plus unhelpful answers to guide you.
+
+Q: How do I use my (U)BEC to power my Raspberry Pi:
+
+A: I don’t know.  My ESCs don’t have an UBEC built in, so I added a DC-DC converter (switching regulator with input / output isolation) to produce the 5v from the LiPo.  That’s what your UBEC does too – I suggest looking in the RPi Forum or joining DIYDrone.com and use their forum.
+
+Q: My ESCs just beeps, and the motors don’t move – do I need to calibrate my ESCs?
+
+A: I have no idea – my DJI 30A ESCs don’t need calibrating.  Try googling “ESC calibration” and see what you can find out.
+
+Q: How to I protect against the battery going flat?
+
+A: A really good battery can still only power a flight for under 10 minutes.  Start all flights and testing with a full battery, and keep in mind how long your testing has been going on.  I do need to add power management to my quadcopter, but that’s not very interesting, so very low priority for me.  Do some research, prebuilt options exist.
+
+Q: How do I add remote control to my quadcopter?
+
+A: Dunno- I’m just starting along that track, and I’m torn between building my own from scratch or writing my own smart phone app from scratch.  I’ll probably build my own physical quadcopter RC, but that’s going to take months and money.  Sorry, but you’re on your own until then.
+
+Q: My Quadcopter does XXXX during outdoor testing. Why?
+
+A: There are so many reasons.  Luckily with each flight comes a set of diagnostic data save as a .csv file.  This is a generic spreadsheet format which Microsoft Excel / Linux LibreOffice can understand, allowing you to diagnose the problem.  Have a look in my blog for graphs to get an idea how much time I’ve spent generating and interpreting graphs!
+
+Begrudgement
+
+To be honest, I slightly regret writing these articles now.  They make it too easy to build a quadcopter without understanding how they work, and decisions made in software, electronics or hardware to make them work well.  Don’t get me wrong, I’ve always wanted to share the ups and downs of my project – hence the blog; I prefer it because the reader gets to understand the whole learning / experimentation process that gone on in the past year to get to this stage.  Whereas these 2 articles pick out just the important bits in the blogs to put together a quadcopter without any real understanding whatsover.  The problem with that is that when something doesn’t work, you have no idea how to investgate why.
+
+The main reason I mention this is I know there’s already a clamouring for a remote control, and through this and the previous article many of your out there are building quadcopters; however, when you complete this testing, you (the hares) will have caught up with me (the tortoise).  Your choice is to become another tortoise and work out the remote control for yourself, or stay as a hare, frustrated at being stuck behind a traffic jam of tortoises!
+
