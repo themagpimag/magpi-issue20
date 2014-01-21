@@ -1,0 +1,57 @@
+Taking Panorama with Pi-Pan, A Pan-Tilt control for your Pi-Camera
+
+Pi-Pan1 is a robotic arm that provides Pan and tilt movements for your Raspberry Pi Camera. It uses  servos for X and Y axis movements and position of each servo can be controlled through Python program, thus giving you ability to point your camera in precise direction.
+
+Programming for Pi-Pan
+Pi-Pan uses Servo Blaster2 and implements API's for Pan and Tilt movement as follows:
+
+do_tilt(int y)
+	Tilt the Pi-Pan head to 'y' position. 
+
+Parameters:
+    y: the tilt position of Pi-Pan ranging from 80 to 220, where
+        80 = looking down
+        220 = looking up
+        150 = straight ahead (neutral position)
+
+do_pan(int x)
+	Pan the Pi-Pan head to 'x' position.  
+
+Parameters:
+    x: the Pan position of Pi-Pan ranging from 50 to 250, where,
+        50 = looking left
+        250 = looking right
+        150 = straight ahead (neutral position)
+
+Internally, the Pi-Pan uses a 6 channel Servo controller board, which fits over the GPIO pins of your Raspberry PI and servos attached to this board can be controlled through Python API, as follows:
+
+pwm(int pin, int position)
+	Move the servo on the specified pin to specified position.
+
+Parameters:
+    pin: pin number for the desired servo.
+    position: desired destination position for the servo attached to this pin, values range from 50 to 250
+
+Synchronized picture taking and camera movements with Python
+
+
+Making a Panorama
+To make a panorama using Pi-Pan, you can take overlapping pictures from a fixed position (rotating camera about a single axis), and then join them using stitching software such as autostitch3.  
+Python code as follows to take pictures:
+
+for pan in xrange(50, 226, 25):
+        p.do_pan (int(pan))
+	      time.sleep(1)
+        cmdstr = "/var/tmp/pic_" + str(pan) + ".jpg"
+        # take the picture.
+        subprocess.call(["raspistill", "-o", cmdstr, "-rot", "180"])
+   
+This code will begin the Pan Servo at left most position (50) and step through increments of 25 (last position being at 225, short of right limit 250), it will stop momentarily at each position, and take pictures.  All the pictures would be stored in /var/tmp folder.
+
+A Panorama taken with Pi-Pan:
+
+References:
+
+1. Pi-Pan: http://www.openelectrons.com/Pi-Pan
+2. ServoBlaster: https://github.com/richardghirst/PiBits
+3. autostitch: http://www.cs.bath.ac.uk/brown/autostitch/autostitch.html 
