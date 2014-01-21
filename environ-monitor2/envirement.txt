@@ -1,0 +1,81 @@
+
+MagPi article 2
+
+In the previous article, a Java example of collecting and logging data from an I2C air pressure sensor was shown. A convenient way to see and analyse the data is to use the javaScript Google chart library on a web page. Depending on the needs, these charts may be accessed locally or stored on the raspberry pi and accessed remotely, or stored and accessed remotely.
+
+Generate chart data files
+
+In the class DataChannel, a scheduled task is started to periodically average the real time data collected. This initiate the generation of different time scale files in comma separeted value format. Files for real time, an hour, a day, a month and a year summary are stored on the raspberry pi SD card.
+
+private static final int MS_TO_HOUR_POINT = 15000;
+Timer t = new Timer();
+averagingTask = new AveragingTask();
+t.schedule(averagingTask, MS_TO_HOUR_POINT, MS_TO_HOUR_POINT);
+
+Uploading files Online
+
+In order to avoid direct access from internet to a personal home network to reach the raspberry pi, a solution among other consist of uploading the files from the raspberry pi to your favorite web server using FTP protocol. Apache provide a Java library to handle FTP protocol file uploading and can be download here : http://commons.apache.org/proper/commons-net/download_net.cgi
+
+The class DataChannel use a static method of the class UploadFTP to put the files on an online web server :
+
+private static final FTPClient ftp = new FTPClient();
+private static final String HOSTNAME = "your_web_server.com";
+public static synchronized void store(Path localFilePath) throws SocketException, IOException {
+
+		ftp.connect(HOSTNAME);
+		if (! FTPReply.isPositiveCompletion(  ftp.getReplyCode() )) {
+			 ftp.disconnect();
+			 return;
+		}
+
+		ftp.login("your_login", your_password");
+		ftp.setFileType(FTP.BINARY_FILE_TYPE);
+		ftp.enterLocalPassiveMode();
+
+		InputStream input = new FileInputStream(localFilePath.toFile());
+		ftp.storeFile("pilogger/" + localFilePath.getFileName(), input);
+		ftp.disconnect();
+}
+
+An example of a web page
+
+web
+
+A HTML web page can be used in local or online to plot the data on a chart. Google provide a javaScript charting library, GoogleChart:
+https://developers.google.com/chart/
+To import .csv file the jquery.csv JavaScript library is also used:
+https://code.google.com/p/jquery-csv/
+
+Different HTML web page can be made to show the different time scales. Javascript language is then used to make the charts. To import csv data on the drawChartFromCSV function from the web page :
+
+var arrayData = $.csv.toArrays(csvString, {onParseValue: $.csv.hooks.castToScalar});
+
+and convert to Google Chart data Table :
+
+var data = new google.visualization.DataTable();
+data.addColumn('datetime', 'Date');
+data.addColumn('number', 'Min');
+data.addColumn('number', 'Average');
+data.addColumn('number', 'Max');
+data.addColumn('number', 'Max');
+for (var i = 0; i < arrayData.length-1; i++) {
+   var d = new Date();
+   d.setTime(arrayData[i+1][0]);
+   data.addRow([d, arrayData[i+1][2], arrayData[i+1][1],
+      (arrayData[i+1][3] - arrayData[i+1][2]), arrayData[i+1][3] ]);
+}
+
+Some option are set, and then create the chart object :
+
+var chart = new google.visualization.ComboChart(document.getElementById(elementId));
+chart.draw(data, options);
+
+Check the source code of the page here:
+https://code.google.com/p/pilogger/wiki/OnlinePilogger
+and an example here :
+http://muth.inc.free.fr/pilogger/day.html
+
+Outlook
+
+You can follow the story and evolution of the system via the blog page. I added wireless temperature probes, and others are planed :
+http://pierremuth.wordpress.com/rpiadventure/

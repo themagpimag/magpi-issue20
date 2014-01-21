@@ -3,61 +3,61 @@ John Hobson and Efrain Olivares
 
 October 30, 2013
 
-After many visits, the cable company technician gave me his cell phone number as he left my house and said to call if anything changed.  My problem with intermittent loss of internet connectivity, “modem flap” could not be solved.  I was trekking to a downstairs closet to manually power-cycle my cable modem once or twice a day and it was getting old.
+After many visits, the cable company technician gave me his cell phone number as he left my house and said to call if anything changed. My problem with intermittent loss of internet connectivity, “modem flap” could not be solved. I was trekking to a downstairs closet to manually power-cycle my cable modem once or twice a day and it was getting old.
 
 
-So after upgrading the cable modem, replacing all of my interior cabling, connectors and terminations and eliminating all but one professional grade splitter with no reduction in modem flaps, I had two options.  One was to call my cable provider and ask them to evaluate the integrity of all of the fiber-optic cable, copper wiring, connectors and terminations between the cable head end and my residence.  I would also ask them to install an additional network node in my neighborhood to reduce the number of “homes passed” on the network node servicing our home. (Ref.1)  My other option was to try the DIY approach.  It seemed prudent to choose the latter.
+So after upgrading the cable modem, replacing all of my interior cabling, connectors and terminations and eliminating all but one professional grade splitter with no reduction in modem flaps, I had two options. One was to call my cable provider and ask them to evaluate the integrity of all of the fiber-optic cable, copper wiring, connectors and terminations between the cable head end and my residence. I would also ask them to install an additional network node in my neighborhood to reduce the number of “homes passed” on the network node servicing our home. (Ref.1) My other option was to try the DIY approach. It seemed prudent to choose the latter.
 
-What I needed to do was automatically check my internet connection every 10 min.  Then,  if no internet connection was detected, power cycle my cable modem off for 15 seconds, then back on and wait 4 minutes for the modem to handshake with the cable plant.  After the handshake I’d check for connectivity again.  In my case the internet connection almost always returned after one power cycle, but I’d give it three chances before giving up.  Then 10 minutes later the process would repeat.  When I got internet back I wanted an email log of the outage time and length sent to me.  I also wanted a soft pleasing audio tone to sound when the modem power cycled to counter the frustration I felt each time there was another modem flap.
+What I needed to do was automatically check my internet connection every 10 min. Then, if no internet connection was detected, power cycle my cable modem off for 15 seconds, then back on and wait 4 minutes for the modem to handshake with the cable plant. After the handshake I’d check for connectivity again. In my case the internet connection almost always returned after one power cycle, but I’d give it three chances before giving up. Then 10 minutes later the process would repeat. When I got internet back I wanted an email log of the outage time and length sent to me. I also wanted a soft pleasing audio tone to sound when the modem power cycled to counter the frustration I felt each time there was another modem flap.
 
 Raspberry Pi Solution
 
-I chose the Rpi as the platform because of its size and flexibility.  I had already set one up and used Python to print “Hello World” and had enough experience with electronics to use the GPIO pins to flash LEDs and trigger relays.  My programming skills are, alas, not up to the task of writing the scripts for this project so I asked for the help of fellow Southern Californian, Efrain Olivares, who has been coding for many years during his career in systems management and networking. 
+I chose the Rpi as the platform because of its size and flexibility. I had already set one up and used Python to print “Hello World” and had enough experience with electronics to use the GPIO pins to flash LEDs and trigger relays. My programming skills are, alas, not up to the task of writing the scripts for this project so I asked for the help of fellow Southern Californian, Efrain Olivares, who has been coding for many years during his career in systems management and networking.
 
-We programmed the Raspberry Pi with a Python script to detect loss of internet connectivity.  The script is executed at configurable intervals using the “cron” function contained in the Linux based OS. Cron may be configured to run scripts and many other functions at specific times, dates and intervals.  We chose every 10 minutes to check for internet connectivity.  When internet connectivity is lost, a GPIO pin responds by triggering two relays, one to switch off power to the cable modem and the other to sound a piezo audio alarm, both for 15 sec.    After power is restored to the modem there’s a 4 minute delay for the modem to re-connect to the cable plant and the Rpi checks for internet availability again.  If we have internet, then the script ends.  If not, the script executes two more times before giving up. Thanks to cron, the OS calls the script again, 10 minutes after the previous call.  Both the script and cron function cycle at their programmed intervals until the internet connection is again detected.  When internet connectivity is restored, the script adds an “internet restored” entry to a log file and emails the log to us.  Fig. 2 shows the logic diagram for Efrain’s code.  The Python script is available for download.
+We programmed the Raspberry Pi with a Python script to detect loss of internet connectivity. The script is executed at configurable intervals using the “cron” function contained in the Linux based OS. Cron may be configured to run scripts and many other functions at specific times, dates and intervals. We chose every 10 minutes to check for internet connectivity. When internet connectivity is lost, a GPIO pin responds by triggering two relays, one to switch off power to the cable modem and the other to sound a piezo audio alarm, both for 15 sec. After power is restored to the modem there’s a 4 minute delay for the modem to re-connect to the cable plant and the Rpi checks for internet availability again. If we have internet, then the script ends. If not, the script executes two more times before giving up. Thanks to cron, the OS calls the script again, 10 minutes after the previous call. Both the script and cron function cycle at their programmed intervals until the internet connection is again detected. When internet connectivity is restored, the script adds an “internet restored” entry to a log file and emails the log to us. Fig. 2 shows the logic diagram for Efrain’s code. The Python script is available for download.
 
 
               
 Construction:
 
-Much has been written (Ref.2) regarding the susceptibility of the Rpi’s GPIO pins to shorts, excess input voltages and current draw.  Take care when you make connections to the GPIO header and be sure to double check the pin numbers. There are no labels on the board and two different pin naming schemes. Here we use GPIO header pin # 11 for our output signal and pin # 6 as ground.  I found that the female connectors on wire prototype jumpers serve as good push on connectors for the GPIO pins.  Don’t use either of the two Rpi power pins (#1 or #2) to supply the relay coils or piezo alarm directly as the pins can supply only 8-16mA.  A powered USB hub is a good source of 5V power for both the relay board and the alarm. 
+Much has been written (Ref.2) regarding the susceptibility of the Rpi’s GPIO pins to shorts, excess input voltages and current draw. Take care when you make connections to the GPIO header and be sure to double check the pin numbers. There are no labels on the board and two different pin naming schemes. Here we use GPIO header pin # 11 for our output signal and pin # 6 as ground. I found that the female connectors on wire prototype jumpers serve as good push on connectors for the GPIO pins. Don’t use either of the two Rpi power pins (#1 or #2) to supply the relay coils or piezo alarm directly as the pins can supply only 8-16mA. A powered USB hub is a good source of 5V power for both the relay board and the alarm.
 
-The relay board includes diode protection against back current from the relay coils and an opto-isolator to keep voltages from the switched devices from returning to the Rpi if there’s a component failure or misconnection.   For safety reasons be sure to switch only the 12 V supply to the modem, not the AC mains power supplying the brick or wall transformer.  A hardware block diagram is shown in fig. 1. 
+The relay board includes diode protection against back current from the relay coils and an opto-isolator to keep voltages from the switched devices from returning to the Rpi if there’s a component failure or misconnection. For safety reasons be sure to switch only the 12 V supply to the modem, not the AC mains power supplying the brick or wall transformer. A hardware block diagram is shown in fig. 1.
  
 
 Building Instructions:
 
-There are many excellent online and print sources for initializing your RaspberryPi board..  Here I’m assuming that the board is configured and connected to the internet.
+There are many excellent online and print sources for initializing your RaspberryPi board.. Here I’m assuming that the board is configured and connected to the internet.
 
-Test your Rpi internet connection by pinging a known web site using the “ping” or “wget” command. If there’s no response, type “ifconfig” on the command line to see if you are connected to your DHCP router and confirm that it has assigned an IP address to your Rpi.  If not connected, check the physical connections between the Rpi board and your router and power cycle the router to see if it discovers the Pi board.  Later, you may choose to create a static IP address for the Rpi so you will always know where to find it on your LAN when you use SSH for remote access.
-When you do establish an internet connection, upgrade and update the RaspberryPi OS.  From the command line, type “sudo apt-get install upgrade”.  After the upgrade loads, type “sudo apt-get update” to download the most recent OS changes.  Make a habit of updating each time you import new software into your Pi.
-
-
-Download the Python script for the project from Github (www.github.com/n6egy/rpi.git) and install it in its own directory on your Rpi.   From this directory, type “python test_connection.py”.  If you have an internet connection, the screen will display a “Connected” message indicating you’ve got internet access.  Next, unplug your network connection and run script again.  You should see a “Not Connected” message on your monitor.  Reattach the cable and run the script once more.  The success message should reappear.
+Test your Rpi internet connection by pinging a known web site using the “ping” or “wget” command. If there’s no response, type “ifconfig” on the command line to see if you are connected to your DHCP router and confirm that it has assigned an IP address to your Rpi. If not connected, check the physical connections between the Rpi board and your router and power cycle the router to see if it discovers the Pi board. Later, you may choose to create a static IP address for the Rpi so you will always know where to find it on your LAN when you use SSH for remote access.
+When you do establish an internet connection, upgrade and update the RaspberryPi OS. From the command line, type “sudo apt-get install upgrade”. After the upgrade loads, type “sudo apt-get update” to download the most recent OS changes. Make a habit of updating each time you import new software into your Pi.
 
 
-Now construct a “Y” wire to connect GPIO pin 11 to the two separate input pins (IN1 and IN2) on the relay board.  Breadboard prototype wires with female connectors fit the pins on both boards.  You’ll need a soldering iron to make the splices and some heat shrink tubing for insulation.  Connect GPIO pin 6 to the input ground on the relay board. (Fig. 3)  
-Next, cut the positive conductor of the 12 volt wire from the brick or wall-wart power supply to your cable modem. Strip and tin each wire and insert the ends into the screw terminals on relay # 1.  Insert one wire end into the center screw of relay #1 and the other into the normally closed terminal (in this case, it’s the one near the edge of the relay board).
+Download the Python script for the project from Github (www.github.com/n6egy/rpi.git) and install it in its own directory on your Rpi. From this directory, type “python test_connection.py”. If you have an internet connection, the screen will display a “Connected” message indicating you’ve got internet access. Next, unplug your network connection and run script again. You should see a “Not Connected” message on your monitor. Reattach the cable and run the script once more. The success message should reappear.
 
-If you want a 15 sec. audio alarm to sound when power is removed from the modem, then cut a length of USB cable with the Type A USB connector still attached to one end.  The red and black wires in the cable connect to the positive and negative pins on the USB connector.  Strip and tin the wire ends. Cut and secure the other two conductors.  Connect the red wire from your piezo alarm to the center terminal of relay #2 and the positive wire from the USB cable to the normally open relay contact.   Connect the black piezo ground wire to the black USB wire.  Now, when GPIO pin 11 is energized, both relays trip.  The contacts on relay #1 open, removing 12 V power to the cable modem and those on #2 close, sending 5V to the piezo buzzer.
+
+Now construct a “Y” wire to connect GPIO pin 11 to the two separate input pins (IN1 and IN2) on the relay board. Breadboard prototype wires with female connectors fit the pins on both boards. You’ll need a soldering iron to make the splices and some heat shrink tubing for insulation. Connect GPIO pin 6 to the input ground on the relay board. (Fig. 3)
+Next, cut the positive conductor of the 12 volt wire from the brick or wall-wart power supply to your cable modem. Strip and tin each wire and insert the ends into the screw terminals on relay # 1. Insert one wire end into the center screw of relay #1 and the other into the normally closed terminal (in this case, it’s the one near the edge of the relay board).
+
+If you want a 15 sec. audio alarm to sound when power is removed from the modem, then cut a length of USB cable with the Type A USB connector still attached to one end. The red and black wires in the cable connect to the positive and negative pins on the USB connector. Strip and tin the wire ends. Cut and secure the other two conductors. Connect the red wire from your piezo alarm to the center terminal of relay #2 and the positive wire from the USB cable to the normally open relay contact. Connect the black piezo ground wire to the black USB wire. Now, when GPIO pin 11 is energized, both relays trip. The contacts on relay #1 open, removing 12 V power to the cable modem and those on #2 close, sending 5V to the piezo buzzer.
 (Figs. 3,4)
 
-Finally, we must provide power to the relay board itself.  Connect the red and black wires of another USB cable to the “JD-VCC” and “GND” pins on the relay board, remembering to observe polarity of this DC voltage.  I found that a standard hobby servo motor (female) connector works well on the relay board power pins.   Clip and remove the center conductor at the plug, splice the two outer conductors to the USB cable, observing correct polarity and connect. (Fig. 4)
+Finally, we must provide power to the relay board itself. Connect the red and black wires of another USB cable to the “JD-VCC” and “GND” pins on the relay board, remembering to observe polarity of this DC voltage. I found that a standard hobby servo motor (female) connector works well on the relay board power pins. Clip and remove the center conductor at the plug, splice the two outer conductors to the USB cable, observing correct polarity and connect. (Fig. 4)
 
-Customize the Python script before you install the device.  Add your own email address and perhaps a different title.  If you like, consult the annotated script and change the duration of modem shutdown (default=15sec.)  and the delay in rechecking the connection (default 240sec.).  You may also want to change the cron script to call the Python script at a different interval (default 10min.).
+Customize the Python script before you install the device. Add your own email address and perhaps a different title. If you like, consult the annotated script and change the duration of modem shutdown (default=15sec.) and the delay in rechecking the connection (default 240sec.). You may also want to change the cron script to call the Python script at a different interval (default 10min.).
 
 Suggestions and Possible Modifications:
 
 Use SMS or Tweet notifications rather than email
-Place another Rpi with an audio alarm and a blinking LED on your desktop as a remote modem flap alarm.  After you install the RaspberryPi and it’s working the way you like, remember that nothing we’ve done here prevents it from multi-tasking.   You can use it for a data hub, mini web server, or anything else the Pi can do and it should still work to mitigate your problem with modem flap. 
+Place another Rpi with an audio alarm and a blinking LED on your desktop as a remote modem flap alarm. After you install the RaspberryPi and it’s working the way you like, remember that nothing we’ve done here prevents it from multi-tasking. You can use it for a data hub, mini web server, or anything else the Pi can do and it should still work to mitigate your problem with modem flap.
 
-The RaspberryPi has been running here for three months in the “headless” mode without problems. (Fig. 5) It’s impervious to power outages as when it re-boots, the cron timer begins and calls the modem flap script at the programmed interval whether or not you are logged in.  I’ve assigned a static IP to the RaspberryPi so I can login via SSH or using the PuTTY program on my Windows machine to change parameters, or add new functions.
+The RaspberryPi has been running here for three months in the “headless” mode without problems. (Fig. 5) It’s impervious to power outages as when it re-boots, the cron timer begins and calls the modem flap script at the programmed interval whether or not you are logged in. I’ve assigned a static IP to the RaspberryPi so I can login via SSH or using the PuTTY program on my Windows machine to change parameters, or add new functions.
 
-Have fun with this practical use of the RaspberryPi.  And by the way, yes I am going to send a copy of this to my cable provider!
+Have fun with this practical use of the RaspberryPi. And by the way, yes I am going to send a copy of this to my cable provider!
 
 Parts:
 
-RaspberryPi (B) 512K boards are now widely available online, as are the SD cards needed to store the operating system.  You can purchase the SD cards separately and then transfer an image of the Raspbian Wheezy OS or buy cards with Raspbian Wheezy pre-installed.  As noted by many authors, the Adafruit website provides Raspberry Pi boards themselves as well as excellent tutorials for installing the Rpi OS and configuring the software. (http://learn.adafruit.com/category/learn-raspberry-pi)   Other online sources for the RaspberryPi include RS in the UK (http://uk.rs-online.com/) and Element14  (http://www.element14.com)
+RaspberryPi (B) 512K boards are now widely available online, as are the SD cards needed to store the operating system. You can purchase the SD cards separately and then transfer an image of the Raspbian Wheezy OS or buy cards with Raspbian Wheezy pre-installed. As noted by many authors, the Adafruit website provides Raspberry Pi boards themselves as well as excellent tutorials for installing the Rpi OS and configuring the software. (http://learn.adafruit.com/category/learn-raspberry-pi) Other online sources for the RaspberryPi include RS in the UK (http://uk.rs-online.com/) and Element14 (http://www.element14.com)
 
 The 2 channel relay board made by Sainsmart is available online at Amazon or direct from the company (http://www.sainsmart.com).
 
@@ -66,8 +66,8 @@ The female prototype connectors are available online at Amazon as are three cond
 
 References:
 
-1.      Cisco Systems, Cable Modem Dropping Off-line in a 2-way Cable Network, Doc. ID.:22543, Updated Sept. 03, 2006.
-2.      Ron Hackett, Have a Piece of Picaxe Pi, Nuts and Volts, Vol. 34 #8, pp 14-21 (Aug 2013).  (A great introduction to working with the RaspberryPi and GPIO pins.)
+1. Cisco Systems, Cable Modem Dropping Off-line in a 2-way Cable Network, Doc. ID.:22543, Updated Sept. 03, 2006.
+2. Ron Hackett, Have a Piece of Picaxe Pi, Nuts and Volts, Vol. 34 #8, pp 14-21 (Aug 2013). (A great introduction to working with the RaspberryPi and GPIO pins.)
 
 Posted by JDH at 11:54 AM No comments:
 Email ThisBlogThis!Share to TwitterShare to Facebook
@@ -78,53 +78,53 @@ RaspberryPi in the Face of Cable Modem Flap
 10/30/2013
 Rev. 11/07/2013
 
-Fig. 1  Hardware Block Diagram
+Fig. 1 Hardware Block Diagram
 
 Fig. 2 Logic Diagram
 
-Fig. 3  Schematic Diagram
+Fig. 3 Schematic Diagram
 
 
 
 
-Fig. 4  Relay Board Output Connections
+Fig. 4 Relay Board Output Connections
 
 
 
 
-Fig. 5  Installed Project
-Fig. 6  Emailed Log File
+Fig. 5 Installed Project
+Fig. 6 Emailed Log File
 
 
 README
 
 
  TEST_CONNECTION.PY
- Raspian 3.6.11 
+ Raspian 3.6.11
  Python 2.7.3
  November 1, 2013
 
 # Have completed a project to power cycle a cable broadband data modem which
-# randomly loses internet connectivity, a phenomenon called "modem flap".  
+# randomly loses internet connectivity, a phenomenon called "modem flap".
 # Power cycling the modem is the only DIY mitigation for this problem.
 
-# The script is called by the cron function in Raspian.  
-# "test_connection.py" sends a connect request to Microsoft's network 
+# The script is called by the cron function in Raspian.
+# "test_connection.py" sends a connect request to Microsoft's network
 # connection internet service (http://www.msftncis.com/ncis.txt).
-# If an html reply is received the script halts.  If no web
+# If an html reply is received the script halts. If no web
 # connection is established, then "gpiooutput.py" is called.
 #
-# "gpiooutput.py"sends GPIO pin 11 high, triggering a relay which removes power to 
-# the cable modem for 15 seconds, then restores power.  4 minutes later, "test_connection.py"
-# is called again, this time by the script, not cron.  If a connection is re-established
-# then the scripts terminate.  If not, "test_connection.py" repeats twice.
-# If a connection is not established after three tries, the program 
+# "gpiooutput.py"sends GPIO pin 11 high, triggering a relay which removes power to
+# the cable modem for 15 seconds, then restores power. 4 minutes later, "test_connection.py"
+# is called again, this time by the script, not cron. If a connection is re-established
+# then the scripts terminate. If not, "test_connection.py" repeats twice.
+# If a connection is not established after three tries, the program
 # halts and does not repeat until the cron calls it again at its 10 min
-# interval.  
+# interval.
 # Cron executes on boot and every 10 min thereafter until interrupted
 # from the console or by a shutdown.
 
-# The cron function is created from the shell command line with 
-# "crontab -e test_connection.py"and configured  with the desired interval (10 min.)
-# and target script;  "10 * * * * test_connection.py"
+# The cron function is created from the shell command line with
+# "crontab -e test_connection.py"and configured with the desired interval (10 min.)
+# and target script; "10 * * * * test_connection.py"
 ##########################################################################################
