@@ -1,0 +1,18 @@
+You guys are doing good work. Continue!
+Victor Ramamoorthy, Ph.D
+
+I just wanted to let you know how much I loved the article on the quadcopter (issue 19). I am a complete novice and have not gotten to the level of this project yet, but it is my ultimate goal to complete it. I just want to thank you for this article/tutorial. 
+
+My goal is to make a completely autonomous quad that can fly from one place to another with just a click of a start mission. I hope to get a round trip of one hour of flight time. 
+With all that being said, I have found so much great information in your magazine. It's a definite read for me as soon as it comes out. Even if the projects are too advanced or not something I think I want to do, I read them to learn more about how the pi works.
+
+Keep up the great work!
+Arthur Lee Martin II 
+
+Over the last year, many changes have been made to the way you can access and enjoy The MagPi. Not only can you download the pdf or read the ISSUU version online at themagpi.com, but you can now access an HTML version too. There is also a MagPi index, which makes it even easier to find and access your favourite MagPi articles! Andrea Stagi, the genius behind the NanPy article in issue 8, has also created an android app, which will allow even greater access to The MagPi articles on the move.
+ 
+All of you should by now have received your volume 1 binder bundle of the printed magazines from the very successful Kickstarter and this year we will be announcing details of our second Kickstarter for the volume 2 binder bundle! We are working tirelessly to ensure we can make printed copies of the magazine available as soon as possible after it has been uploaded online meaning  you can now subscribe to The MagPi at Pi Supply!  
+ 
+Not only that, but The MagPi is now being translated into 3 more languages: French, German and Spanish!
+ 
+We want to make The MagPi even better and can only do this with your help. We need your feedback to help us improve. If you have any comments please feel free to email us or contact us via Twitter or Facebook.
