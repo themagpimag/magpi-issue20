@@ -1,0 +1,61 @@
+RPi‚ Colocation Service in France : work in progress !
+
+NanoXion is a start-up company that was inspired by the French saying "We don't have oil, but we have ideas", to provide Raspberry Pis in a professional hosting environment.  The company decided to take up the challenge of using Raspberry Pis as dedicated servers.
+
+General Overview
+
+NanoXion is based in the town of Tarbes in the South West of France.  The company is a dynamic team of two talented individuals who are passionate about IT Technology.  NanoXion specialises in hosting solutions.  The company provides all kinds of high availability professional hosting solutions, server administration, maintenance and server housing service in a datacenter.
+
+Raspberry Pi hosting solution
+
+More and more companies are seeking flexible and highly advanced methods to efficiently manage their IT infrastructure.  However, common hosting solutions are often not well matched to the required demands of a client, especially for small businesses.  The development of IT technologies should include an environmentally friendly approach.  The current trend of IT technology development is towards more flexible equipment, to provide high global resource efficiency. 
+IT management must now either fully participate in a "green" approach or risk becoming a weak link in the eco-responsibility chain of a company.  Furthermore, new emerging computer nanotechnologies call for the interest of a greater audience, creating a new kind of resources to host.
+Following these aims towards modernisation in the IT hosting business, NanoXion is preparing to launch its own colocation service called NX-BOX.  The NX-BOX service is based on Raspberry Pi technology.
+
+Our Vision
+
+The NX-BOX hosting service provides an efficient, dedicated and inexpensive solution.  This solution follows sustainable development principles, thanks to the low power consumption of the Raspberry Pi.  We want to stimulate digital development, by offering everyone a secure environment to develop and implement groundbreaking software in this digital world.  We also believe that these compact and energy efficient devices can play a very interesting role in a professional hosting environment.
+
+An interesting environment
+
+The Raspberry Pi provides multipurpose solutions in our own server infrastructure, such as managing, task automation and monitoring.  The performance of the Raspberry Pi is great.  It is environmentally friendly thanks to low power consumption, has a very compact size, and performs very well for several specific applications.
+
+It works and rocks!
+
+There is a lot of enthusiasm around the Raspberry Pi, which can impact society itself.  A lot of communities use Raspberry Pis to develop and implement cool stuff.  For four months, we have been setting up a complete and rackable solution to equip our rack-mount server with Raspberry Pis and others compact products.  We think that a Raspberry Pi colocation service is a great choice for running specific applications and to stimulate or improve digital development, for which a "powered-up" server not necessary.
+
+ 
+Some of technical features
+
+Currently, NanoXion is the only company in France that provides a Raspberry Pi colocation service directly for consumers.  In fact, consumers do not need to send their own Raspberry Pi, because we can provide pre-configured Raspberry Pis ready for use.  We have worked out an agreement with our Telecom partners, to provide Raspberry Pi colocation for around 8 euros per month.  This includes unlimited traffic, ability to reboot 24x7 through our manager software, native IPV6 and pre-installation of Raspberry Pi servers.
+
+"As you see, we have several Raspberry Pis in a rack.  I can tell you that we have made an unprecedented number of sketches, cutting/drilling and assembling steps for this!"‚ says Sebastien Fourcade, CEO.
+
+We have developed our own monitoring tools, that are not based on proprietary solutions.  These tools are written in PHP, Shell, WLanguage, and other web technologies.  The whole process of running Raspberry Pis in our computer racks is controlled by our own manager (codename Infinity).
+
+Power supplies have been resized, to accommodate our racks.  We have completely redesigned our rack infrastructure to save time and improve flexibility.  Each rack has two sensors: one for temperature and one for humidity.  The temperature sensors are present to make sure that the rack is functioning properly and to provide warnings of emerging risks.  We are also very careful with security, tracking mac addresses, ip addresses and network paths.
+
+We offer our customers a control panel to manage their Raspberry Pis.  This panel includes graphs of bandwidth, power management, and ssh access.  We provide dedicated solutions based on server-oriented Raspbian (Debian Wheezy) distributions, specifically optimised for hosting solutions.
+
+
+ 
+Graph Bandwidth
+
+ 
+Admin Panel‚ NOC (Network Operation Center)
+
+Service level commitment
+
+Nanoxion is an independent operator with a L33-1 license issued by ARCEP (College of Electronic Communications and Posts Regulation), as well as other major players in the telecommunications market.  This license, governed by Article L. 33-1 of the French Post and Telecommunications Code, is the authorisation needed for an operator of a telecommunications network open to the public.  The company operates with the fibre optic Public Initiative Network (PIN) implemented in the Hautes-Pyrénées.  Our infrastructure has several links and transit agreements with the largest Internet operators.  We provide a high quality service, thanks to our secure datacenter that has an uptime of 99,977% (corresponding to an unplanned downtime maximum of 2 hours a year), close proximity of the technical team, a global 24/7 technical support in case of critical issues and proactive infrastructure monitoring.  Our secure and reliable professional hosting environment ensures our NX-BOX service has guaranteed quality of service and security. The entire architecture has been redesigned to achieve the best possible performance.
+
+ 
+IPv4 vs IPv6
+
+RIPE, the organisation in charge of delegating IP addresses in Europe, ended the distribution of new IPv4 blocks about a year ago.  To cope with the imminent shortage of IPv4 addresses, NanoXion can offer your new generation  dedicated Raspberry Pi server directly with IPv6.  
+
+The IPv6 protocol was developed in anticipation of this shortage, caused by an exponential increase of internet connected devices often called the "Internet of Things".  Unfortunately, not all operators and manufacturers have followed recommended standards.  Therefore, many of the world's users will not be ready for a full transition to IPv6 for some time.  NanoXion provides customers with the choice of running servers either with a "DUAL-STACK" configuration (IPv4 and IPv6 addresses) for a normal cost or with a IPv6 only configuration (no IPv4 addresses at all) at a 10% cost reduction.
+
+Coming soon
+
+Our Raspberry Pi colocation service is scheduled to be fully functional at the beginning of February 2014.  "NX-BOX" refers to our colocation service, under which there is the "PiBOX" service.  More information can be found at http://www.nx-box.net
+
