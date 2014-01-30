@@ -1,18 +1,21 @@
-Adventures in Raspberry Pi - Carrie Ann Philbin
+Python in Easy Steps
+Networking Cookbook
 
-Katy Smith email:
+30% off
+
 Hi Aaron,
+ 
+I have attached the book covers of the four featured titles for you.
+ 
+I can confirm that the landing page will remain: www.bookaxis.com/magpi
+ 
+The voucher codes: MAGPI18 and MAGPI19 have also been created (expiring the end of Nov and Dec respectively).
+ 
+If you have any questions, please feel free to get in touch.
+ 
+Kind regards,
+ 
+Alan.
 
-As promised please find below the code for readers to get a discount when the purchase the book. Please could you say something along the lines of...
-
-"MagPi readers are able to receive a 30% discount off the RRP for Adventures in Raspberry Pi by Carrie Ann Philbin (ISBN 978-1-118-75125-1) when purchased from www.wiley.com. Just enter the promo code VBF77 when prompted."
-
-In the meantime, I've attached a high res cover image. Do let me know if you need anything further.
-
-Kind regards
-
-Scratch in Easy Steps - Sean McManus
-
-I've just had a book published about Scratch, which covers the version used on the Raspberry Pi. I was wondering whether you might be interested in reviewing it in Magpi please? I've attached an information sheet about it here. I've already asked the publisher for a discount code for you and they said they can arrange a 30% discount for orders through their site.
-
-Need to ask publisher for discount code....
+Suggested text similar to:
+The MagPi and Bookaxis are pleased to offer readers a 30% discount on these two titles until December 31st. To claim, order from www.bookaxis.com/magpi and quote promo code MAGPI19.
