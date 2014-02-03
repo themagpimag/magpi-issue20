@@ -1,0 +1,37 @@
+
+Introduction
+
+Scratch is a great tool for young programmers, to encourage them to pick up basic syntax and structures that are used in other programming languages.  Scratch provides functions for many things, but does not directly address different Input/Output (I/O) possibilities.  However, Scratch can communicate over the network.  This means that other applications can be connected to Scratch, either on the same computer or on a remote computer.  When remote sensors are enabled, Scratch becomes a server that listens for connections.   C or Python programs can then be used to send or receive commands, providing access to additional I/O devices.
+
+The purpose of this article is to address the requirements of a few schools that are keen to try more I/O operations, but would rather do so within the Scratch programming environment.  This article is written for these teachers, rather than for pupils.  For this reason more technical details are provided and the article is flagged as being harder than normal Scratch Patch articles.
+
+There is already a ScratchGPIO library that allows communication with the GPIO, it is called ScratchGPIO and was introduced in Issues 9 and 10 of the MagPi.  The goal of this article is to discuss more general concepts that can be easily expanded, using additional Python classes to treat additional devices or protocols.
+
+I/O devices
+
+There are several I/O devices that could be connected to a Raspberry Pi.  The P1 header on a Raspberry Pi (26 pin connector) supports simple GPIO, several busses (SPI, I2C, UART) and pulse width modulation (PWM).  The Raspberry Pi can be used to connected to basic components, such as switches or LEDs, or chips that provide ADC/DAC, buffering or microcontroller functionality, or to complicate boards for specific applications.  The Raspberry Pi can also write and read from files and via other protocols.
+
+RpiScratchIO
+
+RpiScratchIO is a general purpose tool that is designed to be highly expandable.  The library is written in Python and connects to Scratch server processes using the scratchpy Python library https://github.com/pilliq/scratchpy.  Each I/O device is defined in terms of configuration, output or input data operations.  These operations are defined in Python classes that can either be inside the library or be loaded as additional classes at runtime.  The wiring of the Raspberry Pi is defined in terms of a configuration file that includes any associated I/O classes.  Several different configuration files could be prepared beforehand, matching particular wiring configurations or expansion boards.  Once RpiScratchIO starts, the input or output channels defined in the I/O classes given in the configuration file are made available to Scratch.  The goal of RpioScratchIO is to keep the interface as simple and robust as possible.
+
+Configuration file
+
+The configuration file contains the pin allocation, classes to use and connection details for the Scratch server process.  There are three sections in the configuration file: DeviceTypes, DeviceConnections and ScratchConnections.  Only the DeviceTypes section is required.  If some of the devices are not simple GPIO connections, then the DeviceConnections section must follow the DeviceTypes section.   The ScratchConnections section is completely optional.  If this section is not present then RpioScratchIO will try to connect to Scratch on the localhost.
+
+In both the DeviceTypes and DeviceConnections section, the string to the left of the equals sign is the device name.  The device name must be unique and will be the name visible in Scratch.   If the device name is the name of BCM GPIO pin,  as given in this example, then the pin corresponding to the name will be automatically mapped to the device name.  Therefore, no entry is needed in the DeviceConnections section.  When a GPIO pin is used as a device name, then an instance of the class SimpleGpio is automatically assigned to it.  For this reason, SimpleGpio does not need to be to the right of the equals sign.  The other devices in the configuration file have an entry in the DeviceConnections section.  For example, the ADC is setup to use the MCP3008 class and is connected to the first clock select line of the SPI bus.  The device name given in the DeviceConnections section must match the name in the DeviceTypes section.   The two other devices demonstrate how to include a device with more than one connection and a file connection.  The configuration of these devices and any read or write operations are controlled by Scratch.
+
+Other devices that are not in the Devices.py file distributed with RpiScratchIO can be added by using the import statement before the class name.  For this to work, the Python file must be in the PYTHONPATH or in the present working directory.  For example,
+
+ [DeviceTypes]
+ Arm = from Maplin import MaplinArm; MaplinArm()
+
+In this case, when the configuration file is parsed the class MaplinArm will be imported from Maplin.py, instantiated and assigned to the device name Arm.  Writing additional classes that can plugged into RpiScratchIO is covered later in this tutorial.
+
+Starting Scratch
+
+Before starting RpioScratchIO, Scratch must be launched and setup correctly.  Start Scratch from the desktop icon or from the menu bar.  Then click on the "Sensing" menu and right click somewhere the "sensor value" text, near to the bottom of the tool pallete.  Then select "enable remote sensor connections".  Once a program has been saved, this option is remembered as part of the program.  By default in the current version of Raspbian the remote sensor connections are enabled in the menu, but the server process is not available.  In this case, select "disable remote sensor connections" by right clicking on "sensor" value.  Then click again and "enable remote sensor connections".
+
+...add screenshot...
+
+Once the remote sensor connections have been started, Scratch launches a server process that listens on port 42001.  Now the same Raspberry Pi, or another Raspberry Pi connected to the network, can be used to connect to the Scratch session.  

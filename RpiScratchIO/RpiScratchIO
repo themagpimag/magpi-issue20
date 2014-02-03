@@ -1,0 +1,69 @@
+Scratch is a versatile tool that includes many concepts found in other programming languages.  While Scratch provides a lot of useful syntax, being able to control input and output (I/O) devices can be problematic.  Thankfully, Scratch can act as a server that receives and sends messages to clients on the same network.  This means that C or Python programs can be interfaced with Scratch, to provide additional functionality to low-level hardware and other protocols.
+
+Several schools have expressed their interest in a highly flexible Scratch interface, that allows easy addition of other I/O components.  The interface needs to be flexible enough to allow teachers to add additional devices as needed.  To address these requests, the RpiScratchIO Python package has been written.  This article series discusses this package, through documentation and worked examples.
+
+Installation
+
+RpiScratchIO can be installed by typing
+
+easy_install RpiScratchIO
+
+Starting Scratch & RpiScratchIO
+
+Before starting RpiScratchIO, Scratch must be launched and setup correctly.  Start Scratch from the desktop icon or from the menu.  Then click on the "Sensing" menu and right click somewhere the "sensor value" text, near to the bottom of the tool palette.  Then select "enable remote sensor connections".  Once a program has been saved, this option is remembered as part of the program.  By default in the current version of Raspbian the remote sensor connections are enabled in the menu, but the server process is not running.  In this case, select "disable remote sensor connections" by right clicking on "sensor" value.  Then click again and "enable remote sensor connections".  When the server process starts, a dialog box appears to state this.  This dialog box appears when a program that includes remote sensors is loaded, signalling that the server process has started.
+
+To use the low-level GPIO, the RpiScratchIO process needs to be run as the root user.  For non-GPIO devices, it may be possible to run as a normal user.  To launch RpiScratchIO as the root user type
+
+sudo RpiScratchIO [<name of configuration file>]
+
+If no configuration file name is given, then RpiScratchIO will try to read RpiScratchIO.cfg from the present working directory.  The configuration file contains the list of devices, matching the physical wiring of components to the Raspberry Pi.  If Scratch is not running or the remote sensor connections are not running in the Scratch session, then RpiScratchIO will produce an error message and exit.  Once RpiScratchIO has started all of the devices listed in the configuration file will be made available within the Scratch session.  To stop the RpiScratchIO client type CTRL-C.  This will cleanly close any device connections.
+
+Simple GPIO
+
+Create a gpio-out.cfg file, with the complete list of GPIO pins:
+
+No class declaration is needed on the righthand side of the equals sign, since RpiScratchIO automatically uses the GPIO device name from the left of the equals sign to select the SimpleGPIO class for the connection.  The configuration file syntax is summarised at the end of this article.
+
+Open Scratch, start the remote sensor connections and then run RpiScratchIO as the root user.  This will cause the GPIO BCM numbers on the 26 pin connector of a Model B version 2 or Model A Raspberry Pi to become remote sensors.  The RpiScratchIO process then waits an listens for commands from Scratch.  Scratch can then be used to raise or lower the voltages on the GPIO lines
+
+[ add program here ]
+
+When write is called, the GPIO line is automatically configured as an output pin.  In this program there is a sprite instance for each GPIO pin, where the names of the sprites match the names of the pins on a Model B version 2 or Model A Raspberry Pi board.  Scratch sends the commands to turn on or off the GPIO pins as strings to the RpiScratchIO client.  When the client turns on or off the physical hardware, the remote sensor value is set.  If the RpiScratchIO client is not running, then the broadcast messages will be sent but the remote sensor value will not be updated.
+
+Variables
+
+Updating a global variable that has the form "device name:channel", will call the write function of the class corresponding to the device name.  If the device in question only has one channel, then the channel number can be omitted in the variable name.  If the channel number is omitted, then channel number zero is used by default.  Here is a simple example, that updates a single GPIO pin with a global variable:
+
+The example is composed of a configuration file and a Scratch script.  As mentioned in the previous sections, RpiScratchIO should be started after Scratch has been started and configured.  Try clicking on the big button to change the GPIO output voltage.
+
+Call backs
+
+Checking if a status variable or external device is set to a given value is called polling.  If a switched is polled many times, then the processor spends most of its time in an I/O loop.  Alternatively, the polling frequency could be reduced.  However, if the polling frequency is too slow, then the moment when the switch is closed might be missed.  A much better solution is to use an interrupt. 
+
+..here..!!!
+
+I/O devices
+
+There are several I/O devices that could be connected to a Raspberry Pi.  The P1 header on a Raspberry Pi (26 pin connector) supports simple GPIO, several busses (SPI, I2C, UART) and pulse width modulation (PWM).  The Raspberry Pi can be used to connected to basic components, such as switches or LEDs, or chips that provide ADC/DAC, buffering or microcontroller functionality, or to complicate boards for specific applications.  The Raspberry Pi can also write and read from files and via other protocols.
+
+RpiScratchIO
+
+RpiScratchIO is a general purpose tool that is designed to be highly expandable.  The library is written in Python and connects to Scratch server processes using the scratchpy Python library https://github.com/pilliq/scratchpy.  Each I/O device is defined in terms of configuration, output or input data operations.  These operations are defined in Python classes that can either be inside the library or be loaded as additional classes at runtime.  The wiring of the Raspberry Pi is defined in terms of a configuration file that includes any associated I/O classes.  Several different configuration files could be prepared beforehand, matching particular wiring configurations or expansion boards.  Once RpiScratchIO starts, the input or output channels defined in the I/O classes given in the configuration file are made available to Scratch.  The goal of RpioScratchIO is to keep the interface as simple and robust as possible.
+
+Configuration file
+
+The configuration file contains the pin allocation, classes to use and connection details for the Scratch server process.  There are three sections in the configuration file: DeviceTypes, DeviceConnections and ScratchConnections.  Only the DeviceTypes section is required.  If some of the devices are not simple GPIO connections, then the DeviceConnections section must follow the DeviceTypes section.   The ScratchConnections section is completely optional.  If this section is not present then RpioScratchIO will try to connect to Scratch on the localhost.
+
+In both the DeviceTypes and DeviceConnections section, the string to the left of the equals sign is the device name.  The device name must be unique and will be the name visible in Scratch.   If the device name is the name of BCM GPIO pin,  as given in this example, then the pin corresponding to the name will be automatically mapped to the device name.  Therefore, no entry is needed in the DeviceConnections section.  When a GPIO pin is used as a device name, then an instance of the class SimpleGpio is automatically assigned to it.  For this reason, SimpleGpio does not need to be to the right of the equals sign.  The other devices in the configuration file have an entry in the DeviceConnections section.  For example, the ADC is setup to use the MCP3008 class and is connected to the first clock select line of the SPI bus.  The device name given in the DeviceConnections section must match the name in the DeviceTypes section.   The two other devices demonstrate how to include a device with more than one connection and a file connection.  The configuration of these devices and any read or write operations are controlled by Scratch.
+
+Other devices that are not in the Devices.py file distributed with RpiScratchIO can be added by using the import statement before the class name.  For this to work, the Python file must be in the PYTHONPATH or in the present working directory.  For example,
+
+ [DeviceTypes]
+ Arm = from Maplin import MaplinArm; MaplinArm()
+
+In this case, when the configuration file is parsed the class MaplinArm will be imported from Maplin.py, instantiated and assigned to the device name Arm.  Writing additional classes that can plugged into RpiScratchIO is covered later in this tutorial.
+
+
+...add screenshot...
+
+Once the remote sensor connections have been started, Scratch launches a server process that listens on port 42001.  Now the same Raspberry Pi, or another Raspberry Pi connected to the network, can be used to connect to the Scratch session.  
