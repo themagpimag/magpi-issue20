@@ -36,7 +36,7 @@
         <LAYERS NUMMER="4" LEVEL="4" NAME="Body Text" SICHTBAR="1" DRUCKEN="1" EDIT="1" FLOW="1" TRANS="1" BLEND="0" OUTL="0" LAYERC="#00ffff"/>
         <LAYERS NUMMER="5" LEVEL="5" NAME="Chief_Editor_Photo_and_Signature" SICHTBAR="1" DRUCKEN="1" EDIT="1" FLOW="1" TRANS="1" BLEND="0" OUTL="0" LAYERC="#ff00ff"/>
         <Printer firstUse="1" toFile="1" useAltPrintCommand="1" outputSeparations="1" useSpotColors="1" useColor="1" mirrorH="1" mirrorV="1" useICC="1" doGCR="1" doClip="1" setDevParam="1" useDocBleeds="1" cropMarks="1" bleedMarks="1" registrationMarks="1" colorMarks="1" includePDFMarks="1" PSLevel="-859208601" PDLanguage="-859208601" markOffset="-8.20091474058237e+61" BleedTop="0" BleedLeft="0" BleedRight="0" BleedBottom="0" printer="" filename="" separationName="" printerCommand=""/>
-        <PDF firstUse="0" Thumbnails="0" Articles="0" Bookmarks="0" Compress="1" CMethod="1" Quality="2" MirrorH="0" MirrorV="0" Clip="0" RotateDeg="0" PresentMode="0" RecalcPic="1" Grayscale="0" RGBMode="1" UseProfiles="0" UseProfiles2="0" Binding="0" PicRes="300" Resolution="300" Version="14" Intent="1" Intent2="0" SolidP="CineonLog M " ImageP="CineonLog M " PrintP="Fogra27L CMYK Coated Press" InfoString="" BTop="0" BLeft="0" BRight="0" BBottom="0" useDocBleeds="0" cropMarks="0" bleedMarks="0" registrationMarks="0" colorMarks="0" docInfoMarks="0" markOffset="0" ImagePr="0" PassOwner="" PassUser="" Permissions="-4" Encrypt="0" UseLayers="0" UseLpi="0" UseSpotColors="0" doMultiFile="1" displayBookmarks="0" displayFullscreen="0" displayLayers="0" displayThumbs="0" hideMenuBar="0" hideToolBar="0" fitWindow="0" PageLayout="0" openAction="">
+        <PDF firstUse="0" Thumbnails="0" Articles="0" Bookmarks="0" Compress="1" CMethod="0" Quality="0" MirrorH="0" MirrorV="0" Clip="0" RotateDeg="0" PresentMode="0" RecalcPic="0" Grayscale="0" RGBMode="1" UseProfiles="0" UseProfiles2="0" Binding="0" PicRes="300" Resolution="300" Version="14" Intent="1" Intent2="0" SolidP="CineonLog M " ImageP="CineonLog M " PrintP="Fogra27L CMYK Coated Press" InfoString="" BTop="0" BLeft="0" BRight="0" BBottom="0" useDocBleeds="1" cropMarks="1" bleedMarks="1" registrationMarks="1" colorMarks="1" docInfoMarks="1" markOffset="0" ImagePr="0" PassOwner="" PassUser="" Permissions="-4" Encrypt="0" UseLayers="0" UseLpi="0" UseSpotColors="0" doMultiFile="1" displayBookmarks="0" displayFullscreen="0" displayLayers="0" displayThumbs="0" hideMenuBar="0" hideToolBar="0" fitWindow="0" PageLayout="0" openAction="">
             <Fonts Name="Droid Sans Bold"/>
             <Subset Name="FreeSans Bold"/>
             <Subset Name="FreeSans Regular"/>
@@ -91,13 +91,13 @@
             <ITEXT CH="We have more from the Caribbean with Project Curacao.  This project has been so popular with our readers that  John Shovic is extending it further, in a future issue, with a conclusion presenting the project's results.  In this issue John reviews the building and installation of the camera and shutter mount into the project, allowing the production of timed photos, before updating us on changes made to the project from past articles."/>
             <para/>
             <para/>
-            <ITEXT CH="Deepak Patil introduces his project for panoramic photography using Pi-Pan, a robotic arm controlled by his Raspberry Pi to move his Pi Camera.  Deepak looks at some of the code used to control this clever kit and discusses how to take pictures while out in your car."/>
+            <ITEXT CH="Deepak Patil introduces his project for panoramic photography using Pi-Pan, a robotic arm controlled by his Raspberry Pi to move his Raspberry Pi Camera Module.  Deepak looks at some of the code used to control this clever kit and discusses how to take pictures while out in your car."/>
             <para/>
             <para/>
             <ITEXT CH="We have more from Andy Baker’s Quadcopter series with this issue reviewing his pre-flight checks.  His article looks at controlling the movement of the Quadcopter and provides some handy questions and answers for those of you who have been building this project."/>
             <para/>
             <para/>
-            <ITEXT CH="We have a great article detailing John Hobson’s and Efrain Olivares’ journey into managing the frustrating problem of internet dropout. "/>
+            <ITEXT CH="We have a great article detailing John Hobson and Efrain Olivares’ journey into managing the frustrating problem of internet dropout. "/>
             <ITEXT FONT="FreeSans Regular" CH="We then head over to France"/>
             <ITEXT CH=" where Yann Caron presents his development environment and language ‘Algoid’, before the NanoXion chaps present their Raspberry Pi colocation service."/>
             <para/>
@@ -119,7 +119,7 @@
             <ITEXT CH=" / Layout"/>
             <para LINESP="13"/>
             <ITEXT FONT="FreeSans Bold" FONTSIZE="10" CH="W.H. Bell "/>
-            <ITEXT FONT="FreeSans Regular" FONTSIZE="10" CH="- Issue Editor / Layout / Grapics / Administration"/>
+            <ITEXT FONT="FreeSans Regular" FONTSIZE="10" CH="- Issue Editor / Layout / Graphics / Administration"/>
             <para LINESP="13"/>
             <ITEXT FONT="FreeSans Bold" FONTSIZE="10" CH="Bryan Butler"/>
             <ITEXT FONT="FreeSans Regular" FONTSIZE="10" CH=" - Page Design / Graphics"/>
